@@ -67,7 +67,7 @@ def calcShannonEnt(dataSet):
         if currentLabel not in labelCounts.keys():
             labelCounts[currentLabel] = 0
         labelCounts[currentLabel] += 1
-        # print('-----', featVec, labelCounts)
+        print('-----', featVec, labelCounts)
 
     # 对于label标签的占比，求出label标签的香农熵
     shannonEnt = 0.0
@@ -400,5 +400,5 @@ def ContactLensesTest():
 
 
 if __name__ == "__main__":
-    # fishTest()
-    ContactLensesTest()
+    fishTest()
+    #ContactLensesTest()
