@@ -91,7 +91,7 @@ def classify0(inX, dataSet, labels, k):
     # 例如: y=array([3,0,2,1,4,5]) 则，x[3]=1最小，所以y[0]=3;x[5]=5最大，所以y[5]=5。
     # print 'distances=', distances
     sortedDistIndicies = distances.argsort()
-    # print 'distances.argsort()=', sortedDistIndicies
+    #print(f'distances.argsort()={sortedDistIndicies}')
 
     # 2. 选择距离最小的k个点
     classCount = {}
@@ -185,6 +185,7 @@ def file2matrix(filename):
         line = line.strip()
         # 以 '\t' 切割字符串
         listFromLine = line.split('\t')
+        #print(listFromLine)
         # 每列的属性数据，即 features
         returnMat[index] = listFromLine[0 : 3]
         # 每列的类别数据，就是 label 标签数据
@@ -241,9 +242,17 @@ def datingClassTest():
     # 设置测试数据的的一个比例（训练数据集比例=1-hoRatio）
     hoRatio = 0.1  # 测试范围,一部分测试一部分作为样本
     # 从文件中加载数据
-    datingDataMat, datingLabels = file2matrix("data/2.KNN/datingTestSet2.txt")  # load data setfrom file
+    datingDataMat, datingLabels = file2matrix("2.KNN/datingTestSet2.txt")  # load data setfrom file
+
+    # import matplotlib
+    # import matplotlib.pyplot as plt
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111)
+    # ax.scatter(datingDataMat[:, 0], datingDataMat[:, 1], 15.0 * array(datingLabels), 15.0 * array(datingLabels))
+    # plt.show()
     # 归一化数据
     normMat, ranges, minVals = autoNorm(datingDataMat)
+
     # m 表示数据的行数，即矩阵的第一维
     m = normMat.shape[0]
     # 设置测试的样本数量， numTestVecs:m表示训练样本的数量
@@ -278,6 +287,17 @@ def img2vector(filename):
         for j in range(32):
             returnVect[0, 32 * i + j] = int(lineStr[j])
     return returnVect
+def classifyPerson():
+    resultList = ['not at all', 'in small doses', 'in large doses']
+    percentTats = float(input("percentage of time spent playing video games ?"))
+    ffMiles = float(input("frequent filer miles earned per year?"))
+    iceCream = float(input("liters of ice cream consumed per year?"))
+    datingDataMat, datingLabels = file2matrix('2.KNN/datingTestSet2.txt')
+    normMat, ranges, minVals = autoNorm(datingDataMat)
+    inArr = array([ffMiles, percentTats, iceCream])
+    classifierResult = classify0((inArr-minVals)/ranges,normMat,datingLabels, 3)
+    var = "You will probably like this person: ", resultList[classifierResult - 1]
+    print(var)
 
 
 def handwritingClassTest():
@@ -291,7 +311,7 @@ def handwritingClassTest():
     """
     # 1. 导入数据
     hwLabels = []
-    trainingFileList = os.listdir("data/2.KNN/trainingDigits") # load the training set
+    trainingFileList = os.listdir("2.KNN/trainingDigits") # load the training set
     m = len(trainingFileList)
     trainingMat = zeros((m, 1024))
     # hwLabels存储0～9对应的index位置， trainingMat存放的每个位置对应的图片向量
@@ -301,25 +321,46 @@ def handwritingClassTest():
         classNumStr = int(fileStr.split('_')[0])
         hwLabels.append(classNumStr)
         # 将 32*32的矩阵->1*1024的矩阵
-        trainingMat[i] = img2vector('data/2.KNN/trainingDigits/%s' % fileNameStr)
+        trainingMat[i] = img2vector('2.KNN/trainingDigits/%s' % fileNameStr)
 
     # 2. 导入测试数据
-    testFileList = os.listdir('data/2.KNN/testDigits')  # iterate through the test set
+    testFileList = os.listdir('2.KNN/testDigits')  # iterate through the test set
     errorCount = 0
     mTest = len(testFileList)
     for i in range(mTest):
         fileNameStr = testFileList[i]
         fileStr = fileNameStr.split('.')[0]  # take off .txt
         classNumStr = int(fileStr.split('_')[0])
-        vectorUnderTest = img2vector('data/2.KNN/testDigits/%s' % fileNameStr)
+        vectorUnderTest = img2vector('2.KNN/testDigits/%s' % fileNameStr)
         classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
         print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, classNumStr))
         errorCount += classifierResult != classNumStr
     print("\nthe total number of errors is: %d" % errorCount)
     print("\nthe total error rate is: %f" % (errorCount / mTest))
 
+def classifyhandwriting():
+    hwLabels = []
+    trainingFileList = os.listdir("2.KNN/trainingDigits") # load the training set
+    m = len(trainingFileList)
+    trainingMat = zeros((m, 1024))
+    # hwLabels存储0～9对应的index位置， trainingMat存放的每个位置对应的图片向量
+    for i in range(m):
+        fileNameStr = trainingFileList[i]
+        fileStr = fileNameStr.split('.')[0]  # take off .txt
+        classNumStr = int(fileStr.split('_')[0])
+        hwLabels.append(classNumStr)
+        # 将 32*32的矩阵->1*1024的矩阵
+        trainingMat[i] = img2vector('2.KNN/trainingDigits/%s' % fileNameStr)
+    inputname = input("请输入文件名:\n") + '.txt'
+    vectorUnderTest = img2vector('2.KNN/testDigits/%s' % inputname)
+    classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
+    print("手写数字识别结果为: %d" % (classifierResult))
+
+
 
 if __name__ == '__main__':
     # test1()
-    # datingClassTest()
-    handwritingClassTest()
+    #datingClassTest()
+    #classifyPerson()
+    #classifyhandwriting()
+    #handwritingClassTest()
