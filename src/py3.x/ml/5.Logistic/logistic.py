@@ -27,7 +27,7 @@ def load_data_set():
     for line in f.readlines():
         line_arr = line.strip().split()
         # 为了方便计算，我们将 X0 的值设为 1.0 ，也就是在每一行的开头添加一个 1.0 作为 X0
-        data_arr.append([1.0, np.float(line_arr[0]), np.float(line_arr[1])])
+        data_arr.append([1.0, float(line_arr[0]), float(line_arr[1])])
         label_arr.append(int(line_arr[2]))
     return data_arr, label_arr
 
@@ -166,9 +166,9 @@ def test():
     """
     data_arr, class_labels = load_data_set()
     # 注意，这里的grad_ascent返回的是一个 matrix, 所以要使用getA方法变成ndarray类型
-    # weights = grad_ascent(data_arr, class_labels).getA()
+    weights = grad_ascent(data_arr, class_labels).getA()
     # weights = stoc_grad_ascent0(np.array(data_arr), class_labels)
-    weights = stoc_grad_ascent1(np.array(data_arr), class_labels)
+    #weights = stoc_grad_ascent1(np.array(data_arr), class_labels)
     plot_best_fit(weights)
 
 
